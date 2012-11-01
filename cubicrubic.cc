@@ -9,9 +9,6 @@ enum color_t {
     orange = 4,
     blue   = 5
 };
-const char *COLORS[] = {
-    "R", "W", "G", "Y", "O", "B"
-};
 
 struct side {
     color_t cells[3][3];
@@ -69,7 +66,7 @@ class cube {
     static const neighbors rotation_scheme[6];
     
     color_t _shift(int idx, side::action pf, neighbors::value pv) {
-        color_t last_cell_color = green;
+        color_t last_cell_color = green; // any color in fact
         int current = face_side;
         for(int i = 0; i < 4; i++) {
             last_cell_color = (sides[current].*pf)(idx, last_cell_color);
@@ -115,7 +112,7 @@ public:
         for(int i = 0; i < 3; i++) {
             std::cout << "|";
             for(int j = 0; j < 3; j++) {
-                std::cout << COLORS[sides[face_side].cells[i][j]];
+                std::cout << "RWGYOB"[sides[face_side].cells[i][j]];
             }
             std::cout << "|\n";
         }
@@ -132,7 +129,7 @@ const cube::neighbors cube::rotation_scheme[6] = {
 };
 
 int
-main(int argc, char** argv) {
+main(int argc, char *argv[]) {
     cube the_cube;
     while(true) {
         the_cube.display_face();
