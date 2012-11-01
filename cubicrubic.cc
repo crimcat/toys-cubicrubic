@@ -12,6 +12,7 @@ enum color_t {
 
 struct side {
     color_t cells[3][3];
+    
     void fill(color_t c) {
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
@@ -51,7 +52,9 @@ struct side {
         return old;
     }
 };
+
 class cube {
+private:
     side sides[6];
     int face_side;
     
@@ -119,6 +122,7 @@ public:
         std::cout << "-----";
     }
 };
+
 const cube::neighbors cube::rotation_scheme[6] = {
     { 3, 1, 5, 4 },
     { 0, 2, 4, 5 },
