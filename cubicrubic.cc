@@ -22,6 +22,9 @@ struct side {
             }
         }
     }
+    
+    typedef color_t (side::*action)(int, color_t);
+    
     color_t shift_row_right(int i, color_t new_c) {
         color_t old = cells[i][2];
         cells[i][2] = cells[i][1];
@@ -60,9 +63,21 @@ class cube {
         int right;
         int up;
         int down;
+        
+        typedef int (neighbors::*value);
     };
     static const neighbors rotation_scheme[6];
     
+    color_t _shift(int idx, side::action pf, neighbors::value pv) {
+        color_t last_cell_color = green;
+        int current = face_side;
+        for(int i = 0; i < 4; i++) {
+            last_cell_color = (sides[current].*pf)(idx, last_cell_color);
+            current = rotation_scheme[current].*pv;
+        }
+        return last_cell_color;
+    }
+
 public:
     cube() : face_side(2) {
         for(int i = 0; i < 6; i++) {
@@ -83,40 +98,16 @@ public:
         face_side = rotation_scheme[face_side].right;
     }
     void shilt_row_right(int row) {
-        color_t last_cell = green;
-        int current = face_side;
-        for(int i = 0; i < 4; i++) {
-            last_cell = sides[current].shift_row_right(row, last_cell);
-            current = rotation_scheme[current].right;
-        }
-        sides[face_side].cells[row][0] = last_cell;
+        sides[face_side].cells[row][0] = _shift(row, &side::shift_row_right, &neighbors::right);
     }
     void shift_row_left(int row) {
-        color_t last_cell = green;
-        int current = face_side;
-        for(int i = 0; i < 4; i++) {
-            last_cell = sides[current].shift_row_left(row, last_cell);
-            current = rotation_scheme[current].left;
-        }
-        sides[face_side].cells[row][2] = last_cell;
+        sides[face_side].cells[row][2] = _shift(row, &side::shift_row_left, &neighbors::left);
     }
     void shift_col_up(int col) {
-        color_t last_cell = green;
-        int current = face_side;
-        for(int i = 0; i < 4; i++) {
-            last_cell = sides[current].shift_col_up(col, last_cell);
-            current = rotation_scheme[current].up;
-        }
-        sides[face_side].cells[2][col] = last_cell;
+        sides[face_side].cells[2][col] = _shift(col, &side::shift_col_up, &neighbors::up);
     }
     void shift_col_down(int col) {
-        color_t last_cell = green;
-        int current = face_side;
-        for(int i = 0; i < 4; i++) {
-            last_cell = sides[current].shift_col_down(col, last_cell);
-            current = rotation_scheme[current].down;
-        }
-        sides[face_side].cells[0][col] = last_cell;
+        sides[face_side].cells[0][col] = _shift(col, &side::shift_col_down, &neighbors::down);
     }
     
     void display_face() const {
@@ -159,7 +150,7 @@ main(int argc, char** argv) {
             the_cube.rotate_right();
         } else if(cmd.length() == 4) {
             int param = static_cast<int>(cmd[3] - '0');
-            if((param > 0) && (param < 3)) {
+            if((param >= 0) && (param < 3)) {
                 if(!cmd.compare(0, 3, "srl")) {
                     the_cube.shift_row_left(param);
                 } else if(!cmd.compare(0, 3, "srr")) {
