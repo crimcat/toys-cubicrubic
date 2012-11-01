@@ -1,14 +1,7 @@
 #include <iostream>
 #include <string>
 
-enum color_t {
-    red    = 0,
-    white  = 1,
-    green  = 2,
-    yellow = 3,
-    orange = 4,
-    blue   = 5
-};
+typedef int color_t;
 
 struct side {
     color_t cells[3][3];
@@ -69,7 +62,7 @@ private:
     static const neighbors rotation_scheme[6];
     
     color_t _shift(int idx, side::action pf, neighbors::value pv) {
-        color_t last_cell_color = green; // any color in fact
+        color_t last_cell_color = 0; // any color in fact
         int current = face_side;
         for(int i = 0; i < 4; i++) {
             last_cell_color = (sides[current].*pf)(idx, last_cell_color);
