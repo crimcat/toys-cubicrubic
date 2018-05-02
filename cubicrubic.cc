@@ -91,16 +91,24 @@ public:
         face_side = rotation_scheme[face_side].right;
     }
     void shilt_row_right(int row) {
-        sides[face_side].cells[row][0] = _shift(row, &side::shift_row_right, &neighbors::right);
+        for(int i = 0; i < 3; ++i) {
+            sides[face_side].cells[row][0] = _shift(row, &side::shift_row_right, &neighbors::right);
+        }
     }
     void shift_row_left(int row) {
-        sides[face_side].cells[row][2] = _shift(row, &side::shift_row_left, &neighbors::left);
+        for(int i = 0; i < 3; ++i) {
+            sides[face_side].cells[row][2] = _shift(row, &side::shift_row_left, &neighbors::left);
+        }
     }
     void shift_col_up(int col) {
-        sides[face_side].cells[2][col] = _shift(col, &side::shift_col_up, &neighbors::up);
+        for(int i = 0; i < 3; ++i) {
+            sides[face_side].cells[2][col] = _shift(col, &side::shift_col_up, &neighbors::up);
+        }
     }
     void shift_col_down(int col) {
-        sides[face_side].cells[0][col] = _shift(col, &side::shift_col_down, &neighbors::down);
+        for(int i = 0; i < 3; ++i) {
+            sides[face_side].cells[0][col] = _shift(col, &side::shift_col_down, &neighbors::down);
+        }
     }
     
     void display_face() const {
